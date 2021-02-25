@@ -3,11 +3,12 @@
 #include <cstdlib>
 #include <ctime>
 
-// find maximum among minumums in row 
-// m - rows, n - columns
+/* (parallel) find maximum among minumums in row 
+ m - rows, n - columns */
 int task2_omp(int** matrix, int m, int n)
 {
 	int max = 0;
+	double t1 = omp_get_wtime();
 	for (int i = 0; i < m; ++i)
 	{
 		int min_row_elem = matrix[i][0];
@@ -20,6 +21,29 @@ int task2_omp(int** matrix, int m, int n)
 		}
 		max = min_row_elem > max ? min_row_elem : max;
 	}
+	double t2 = omp_get_wtime();
+	printf("time (omp): %lf\n", t2 - t1);
+	return max;
+}
+
+// sequantial
+int task2(int** matrix, int m, int n)
+{
+	int max = 0;
+	double t1 = omp_get_wtime();
+	for (int i = 0; i < m; ++i)
+	{
+		int min_row_elem = matrix[i][0];
+		max = min_row_elem;
+
+		for (int j = 1; j < n; ++j)
+		{
+			min_row_elem = min_row_elem < matrix[i][j] ? min_row_elem : matrix[i][j];
+		}
+		max = min_row_elem > max ? min_row_elem : max;
+	}
+	double t2 = omp_get_wtime();
+	printf("time: %lf\n", t2 - t1);
 	return max;
 }
 
@@ -41,10 +65,11 @@ int** generate_matrix(int m, int n)
 
 int main()
 {
-	int m = 6, n = 8;
+	int m = 50, n = 80;
 	int** matrix = generate_matrix(m, n);
 	
-	printf("max: %d\n", task2_omp(matrix, m, n));
+	printf("max (omp): %d\n", task2_omp(matrix, m, n));
+	printf("max: %d\n", task2(matrix, m, n));
 	for (int i = 0; i < m; ++i)
 	{
 		delete[] matrix[i];
