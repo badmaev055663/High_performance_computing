@@ -74,7 +74,7 @@ int count_substr_omp(const std::string& str, const std::string& substr, double& 
     int res = 0;
     omp_set_num_threads(num_threads);
     double t1 = omp_get_wtime();
-#pragma omp parallel shared(res)
+#pragma omp parallel 
     {
         int i = omp_get_thread_num();
         res_local[i] = local_count(str, substr, i);
