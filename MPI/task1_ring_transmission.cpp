@@ -18,8 +18,15 @@ int main(int argc, char** argv)
 	// процесс от которого ожидается сообщение
 	int src = rank == 0 ? numtasks - 1 : rank - 1;
 
-	char send_buff[BUFFSIZE] = "Hello from process ";
-	_itoa(rank, send_buff + strlen("Hello from process "), 10);
+	// подготовка сообщения
+	const char* msg = "Hello from process ";
+	char send_buff[BUFFSIZE];
+	strcpy(send_buff, msg);
+	// assume rank < 10
+	int len = strlen(msg);
+	send_buff[len] = '0' + rank;
+	send_buff[len + 1] = '\0';
+
 	char recv_buff[BUFFSIZE];
 
 	/* deadlock
